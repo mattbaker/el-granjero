@@ -14,8 +14,7 @@ func main() {
 	client := &http.Client{}
 
 	req, _ := http.NewRequest("GET", endpointURL, nil)
-	req.Header.Add("X-API-Key", key)
-
+	req.Header["X-API-Key"] = []string{key}
 	fmt.Print(req.Header)
 
 	resp, err := client.Do(req)
