@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	fmt.Printf("hello world\n")
+	key := os.Getenv("DESTINY_KEY")
+	fmt.Printf("Key is: %s\n", key)
 }
