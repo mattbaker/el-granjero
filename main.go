@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 const membershipType = "2"
+const timeParseTemplate = "2006-01-02T15:04:05Z"
 
 var destinyAPIClient = NewAPIClient("Destiny", os.Getenv("DESTINY_KEY"))
 var userAPIClient = NewAPIClient("User", os.Getenv("DESTINY_KEY"))
@@ -36,9 +38,25 @@ func getAccountSummary(membershipID string) ([]Character, error) {
 	return response.Response.Data.Characters, nil
 }
 
+func getMostRecentCharacterID(characters []Character) (characterID string) {
+	var mostRecentTimestamp int64
+	var parsedTime time.Time
+	var mostRecentCharacterID string
+
+	for i := 0; i < len(characters); i++ {
+		parsedTime, _ = time.Parse(timeParseTemplate, characters[i].CharacterBase.DateLastPlayed)
+		if parsedTime.Unix() > mostRecentTimestamp {
+			mostRecentTimestamp = parsedTime.Unix()
+			mostRecentCharacterID = characters[i].CharacterBase.CharacterID
+		}
+	}
+	return mostRecentCharacterID
+}
+
 func main() {
 	profile, _ := findPsnMember("malhuevo")
 	fmt.Printf("%+v\n", profile)
 	characters, _ := getAccountSummary(profile.MembershipID)
-	fmt.Printf("%+v\n", characters)
+	mostRecentCharacterID := getMostRecentCharacterID(characters)
+	fmt.Printf("%+v\n", mostRecentCharacterID)
 }
