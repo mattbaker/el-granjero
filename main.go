@@ -83,7 +83,6 @@ func getCharacters() {
 func getFullInventory(membershipID string) ([]InventoryItem, error) {
 	endPoint := fmt.Sprintf("https://www.bungie.net/Platform/Destiny/2/Account/%s/Items/", membershipID)
 	responseString := apiRequest(endPoint)
-	// fmt.Printf("Inventory Response:\n%s\n", responseString)
 	res := InventoryResponse{}
 	json.Unmarshal([]byte(responseString), &res)
 	if len(res.Response.Data.Items) == 0 {
@@ -92,13 +91,16 @@ func getFullInventory(membershipID string) ([]InventoryItem, error) {
 	return res.Response.Data.Items, nil
 }
 
-func getCharacterInventory() {
-	// http://www.bungie.net/platform/Destiny/[membershipType]/Account/[d]/Character/[g]/Inventory/
+func getCharacterInventory(membershipType string, membershipId string, characterId string) {
+	endPoint := fmt.Sprintf("https://www.bungie.net/Platform/Destiny/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipId, characterId)
+	responseString := apiRequest(endPoint)
+	fmt.Println(responseString)
 }
 
 func main() {
-	profile, _ := findPsnMember("swigwillis")
-	fmt.Printf("MembershipID: %s\n", profile.MembershipID)
-	inventory, _ := getFullInventory(profile.MembershipID)
-	fmt.Printf("%+v\n", inventory)
+	profile, _ := findPsnMember("malhuevo")
+	// inventory, _ := getFullInventory(profile.MembershipID)
+	getCharacterInventory("2", profile.MembershipID, "2305843009323254133")
+
+	// fmt.Printf("%+v\n", inventory)
 }
