@@ -9,46 +9,6 @@ import (
 	"os"
 )
 
-// BaseResponse is a general API response from bungie
-type BaseResponse struct {
-	ErrorCode       int
-	ThrottleSeconds int
-	ErrorStatus     string
-	Message         string
-}
-
-// ProfileResponse is a response to a profile request from bungie
-type ProfileResponse struct {
-	*BaseResponse
-	Response []Profile
-}
-
-type InventoryResponse struct {
-	*BaseResponse
-	Response struct {
-		Data struct {
-			Items []InventoryItem
-		}
-	}
-}
-
-// Profile represents a profile
-type Profile struct {
-	IconPath       string
-	MembershipType int
-	MembershipID   string
-	DisplayName    string
-}
-
-type InventoryItem struct {
-	ItemHash       int
-	ItemID         string
-	Quantity       int
-	TransferStatus int
-	State          int
-	BucketHash     int
-}
-
 const membershipType = "2"
 
 var client = &http.Client{}
@@ -93,8 +53,8 @@ func getFullInventory(membershipID string) ([]InventoryItem, error) {
 	return res.Response.Data.Items, nil
 }
 
-func getCharacterInventory(membershipID string, characterId string) {
-	endPoint := fmt.Sprintf("https://www.bungie.net/Platform/Destiny/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipID, characterId)
+func getCharacterInventory(membershipID string, characterID string) {
+	endPoint := fmt.Sprintf("https://www.bungie.net/Platform/Destiny/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipID, characterID)
 	responseString := apiRequest(endPoint)
 	fmt.Println(responseString)
 }
