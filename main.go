@@ -49,6 +49,8 @@ type InventoryItem struct {
 	BucketHash     int
 }
 
+const membershipType = "2"
+
 var client = &http.Client{}
 var apiKey = os.Getenv("DESTINY_KEY")
 
@@ -91,8 +93,8 @@ func getFullInventory(membershipID string) ([]InventoryItem, error) {
 	return res.Response.Data.Items, nil
 }
 
-func getCharacterInventory(membershipType string, membershipId string, characterId string) {
-	endPoint := fmt.Sprintf("https://www.bungie.net/Platform/Destiny/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipId, characterId)
+func getCharacterInventory(membershipID string, characterId string) {
+	endPoint := fmt.Sprintf("https://www.bungie.net/Platform/Destiny/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipID, characterId)
 	responseString := apiRequest(endPoint)
 	fmt.Println(responseString)
 }
@@ -100,7 +102,7 @@ func getCharacterInventory(membershipType string, membershipId string, character
 func main() {
 	profile, _ := findPsnMember("malhuevo")
 	// inventory, _ := getFullInventory(profile.MembershipID)
-	getCharacterInventory("2", profile.MembershipID, "2305843009323254133")
+	getCharacterInventory(profile.MembershipID, "2305843009323254133")
 
 	// fmt.Printf("%+v\n", inventory)
 }
