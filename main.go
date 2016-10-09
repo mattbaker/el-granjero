@@ -7,12 +7,13 @@ import (
 
 const membershipType = "2"
 
-var apiClient = NewAPIClient(os.Getenv("DESTINY_KEY"))
+var destinyAPIClient = NewAPIClient("Destiny", os.Getenv("DESTINY_KEY"))
+var userAPIClient = NewAPIClient("User", os.Getenv("DESTINY_KEY"))
 
 func findPsnMember(username string) (*Profile, error) {
 	endPoint := fmt.Sprintf("/SearchDestinyPlayer/%s/%s/", membershipType, username)
 	response := ProfileResponse{}
-	apiClient.RequestAsJSON(endPoint, &response)
+	destinyAPIClient.RequestAsJSON(endPoint, &response)
 	if len(response.Response) == 0 {
 		return nil, fmt.Errorf("0 search results returned for %s", username)
 	}
@@ -21,15 +22,14 @@ func findPsnMember(username string) (*Profile, error) {
 
 func getCharacterInventory(membershipID string, characterID string) {
 	endPoint := fmt.Sprintf("/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipID, characterID)
-	responseString := apiClient.Request(endPoint)
+	responseString := destinyAPIClient.Request(endPoint)
 	fmt.Println(responseString)
 }
 
 func getAccountSummary(membershipID string) ([]Character, error) {
 	endPoint := fmt.Sprintf("/%s/Account/%s/Summary/", membershipType, membershipID)
-	// fmt.Println(responseString)
 	response := SummaryResponse{}
-	apiClient.RequestAsJSON(endPoint, &response)
+	destinyAPIClient.RequestAsJSON(endPoint, &response)
 	if len(response.Response.Data.Characters) == 0 {
 		return nil, fmt.Errorf("0 characters returned for membership ID %s", membershipID)
 	}

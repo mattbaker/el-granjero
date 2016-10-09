@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -9,27 +10,28 @@ import (
 
 //TODO: check for 404s and other bad responses, send error
 
-const server = "https://www.bungie.net/Platform/Destiny"
+const server = "https://www.bungie.net/Platform"
 
 // APIClient is a destiny-api specific wrapper around http.Client
 type APIClient struct {
 	HTTPClient *http.Client
 	APIKey     string
+	Service    string
 }
 
 // NewAPIClient creates a new APIClient with the given key
-func NewAPIClient(key string) *APIClient {
+func NewAPIClient(service string, key string) *APIClient {
 	var client = &http.Client{}
-	return &APIClient{HTTPClient: client, APIKey: key}
+	return &APIClient{HTTPClient: client, APIKey: key, Service: service}
 }
 
-func buildEndpointURI(endpoint string) string {
-	return server + endpoint
+func (apiClient *APIClient) buildEndpointURI(endpoint string) string {
+	return fmt.Sprintf("%s/%s%s", server, apiClient.Service, endpoint)
 }
 
 // Request makes an APIRequest to Destiny
 func (apiClient *APIClient) Request(endpoint string) string {
-	req, _ := http.NewRequest("GET", buildEndpointURI(endpoint), nil)
+	req, _ := http.NewRequest("GET", apiClient.buildEndpointURI(endpoint), nil)
 	req.Header.Add("X-API-Key", apiClient.APIKey)
 
 	resp, err := apiClient.HTTPClient.Do(req)
