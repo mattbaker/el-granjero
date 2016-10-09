@@ -19,22 +19,26 @@ func findPsnMember(username string) (*Profile, error) {
 	return &response.Response[0], nil
 }
 
-func getFullInventory(membershipID string) ([]InventoryItem, error) {
-	endPoint := fmt.Sprintf("/%s/Account/%s/Items/", membershipType, membershipID)
-	response := InventoryResponse{}
-	apiClient.RequestAsJSON(endPoint, &response)
-	return response.Response.Data.Items, nil
+func getCharacterInventory(membershipID string, characterID string) {
+	endPoint := fmt.Sprintf("/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipID, characterID)
+	responseString := apiClient.Request(endPoint)
+	fmt.Println(responseString)
 }
 
-// func getCharacterInventory(membershipID string, characterID string) {
-// 	endPoint := fmt.Sprintf("/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipID, characterID)
-// 	response := apiClient.RequestAsJson(endPoint, &InventoryResponse{}).(InventoryResponse)
-// 	return response.Response.Data.Items, nil
-// }
+func getAccountSummary(membershipID string) ([]Character, error) {
+	endPoint := fmt.Sprintf("/%s/Account/%s/Summary/", membershipType, membershipID)
+	// fmt.Println(responseString)
+	response := SummaryResponse{}
+	apiClient.RequestAsJSON(endPoint, &response)
+	if len(response.Response.Data.Characters) == 0 {
+		return nil, fmt.Errorf("0 characters returned for membership ID %s", membershipID)
+	}
+	return response.Response.Data.Characters, nil
+}
 
 func main() {
 	profile, _ := findPsnMember("malhuevo")
 	fmt.Printf("%+v\n", profile)
-	inventory, _ := getFullInventory(profile.MembershipID)
-	fmt.Printf("%+v\n", inventory)
+	characters, _ := getAccountSummary(profile.MembershipID)
+	fmt.Printf("%+v\n", characters)
 }
