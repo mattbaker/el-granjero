@@ -38,6 +38,13 @@ func getAccountSummary(membershipID string) ([]Character, error) {
 	return response.Response.Data.Characters, nil
 }
 
+func getItem(membershipID string, characterID string, itemInstanceID string) {
+	endPoint := fmt.Sprintf("/%s/Account/%s/Character/%s/Inventory/%s", membershipType, membershipID, characterID, itemInstanceID)
+	// endPoint := fmt.Sprintf("/%s/Account/%s/Character/%s/ItemReference/%s", membershipType, membershipID, characterID, itemHash)
+	responseString := destinyAPIClient.Request(endPoint)
+	fmt.Println(responseString)
+}
+
 func getMostRecentCharacterID(characters []Character) (characterID string) {
 	var mostRecentTimestamp int64
 	var parsedTime time.Time
@@ -58,5 +65,9 @@ func main() {
 	fmt.Printf("%+v\n", profile)
 	characters, _ := getAccountSummary(profile.MembershipID)
 	mostRecentCharacterID := getMostRecentCharacterID(characters)
-	fmt.Printf("%+v\n", mostRecentCharacterID)
+	// getCharacterInventory(profile.MembershipID, mostRecentCharacterID)
+	itemInstanceID := "6917529053378064962"
+	// itemHash := "2962927168"
+	getItem(profile.MembershipID, mostRecentCharacterID, itemInstanceID)
+	// fmt.Printf("%+v\n", inventory)
 }
