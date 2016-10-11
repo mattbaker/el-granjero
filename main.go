@@ -23,7 +23,7 @@ func findPsnMember(username string) (*Profile, error) {
 }
 
 func getCharacterInventory(membershipID string, characterID string) {
-	endPoint := fmt.Sprintf("/%s/Account/%s/Character/%s/Inventory/", membershipType, membershipID, characterID)
+	endPoint := fmt.Sprintf("/%s/Account/%s/Character/%s/Inventory/Summary/?definitions=true", membershipType, membershipID, characterID)
 	responseString := destinyAPIClient.Request(endPoint)
 	fmt.Println(responseString)
 }
@@ -55,8 +55,7 @@ func getMostRecentCharacterID(characters []Character) (characterID string) {
 
 func main() {
 	profile, _ := findPsnMember("malhuevo")
-	fmt.Printf("%+v\n", profile)
 	characters, _ := getAccountSummary(profile.MembershipID)
 	mostRecentCharacterID := getMostRecentCharacterID(characters)
-	fmt.Printf("%+v\n", mostRecentCharacterID)
+	getCharacterInventory(profile.MembershipID, mostRecentCharacterID)
 }
